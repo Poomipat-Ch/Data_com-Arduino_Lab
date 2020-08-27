@@ -1,0 +1,34 @@
+#include<SoftwareSerial.h>
+
+SoftwareSerial kenta(10,11);
+char myByte;
+
+void setup() {
+  kenta.begin(57600);
+  Serial.begin(9600);
+
+  Serial.println("Enter ID:");  
+  while (!(Serial.available() > 0)){
+  }
+
+  myByte = char(Serial.read());
+  Serial.print("Your ID: ");
+  Serial.println(myByte);
+}
+
+void loop() {
+  if (kenta.available()){
+    buff = kenta.read();
+    if(myByte == buff){
+      Serial.println(buff);  
+   }
+   else{
+      Serial.println("Not for you");
+    }
+  }
+
+  if(Serial.available()){
+      kenta.write(Serial.read());
+    }
+    
+}
