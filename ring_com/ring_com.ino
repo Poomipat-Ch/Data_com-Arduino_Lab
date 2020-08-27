@@ -14,26 +14,44 @@ void setup() {
   myByte = char(Serial.read());
   Serial.print("Your ID: ");
   Serial.println(myByte);
+  delay(200);
 }
 
 void loop() {
+  delay(100);
   if (kenta.available()){
     String buff = kenta.readString();
     if(myByte == buff[0]){
-        Serial.println(buff);  
+        Serial.print(buff[1]);
+        for (int i = 2; i < buff.length(); i++){
+            Serial.print(buff[i]);
+        }
+        Serial.println();
    }
    else{
-      Serial.println("Not for you");
+     for(int i = 0; i < buff.length(); i++){
+        kenta.write(buff[i]);
+      }
     }
   }
 
   if(Serial.available()){
-    String toSend;
-    toSend = ""+myByte;
+    String toSend="",buff="";
+    
     while (Serial.available()){
-       toSend += char(Serial.read());
+       buff += char(Serial.read());
     }
-    //Serial.println(toSend); debug
+    //Serial.println(buff);
+    toSend += char(buff[0]);
+    toSend += char(myByte);
+    for(int i=1;i<buff.length();i++){
+        toSend += char(buff[i]);
+      }
+    Serial.print("Me: ");
+    for (int i = 2; i < buff.length(); i++){
+     Serial.print(buff[i]); 
+    }
+    Serial.println();
      for(int i = 0; i < toSend.length(); i++){
         kenta.write(toSend[i]);
       }
