@@ -10,7 +10,6 @@ void setup() {
   Serial.println("Enter ID:");  
   while (!(Serial.available() > 0)){
   }
-
   myByte = char(Serial.read());
   Serial.print("Your ID: ");
   Serial.println(myByte);
@@ -36,7 +35,7 @@ void loop() {
   }
 
   if(Serial.available()){
-    String toSend="",buff="";
+    String toSend,buff;
     
     while (Serial.available()){
        buff += char(Serial.read());
@@ -44,7 +43,7 @@ void loop() {
     //Serial.println(buff);
     toSend += char(buff[0]);
     toSend += char(myByte);
-    for(int i=1;i<buff.length();i++){
+    for(int i=1; i<buff.length(); i++){
         toSend += char(buff[i]);
       }
     Serial.print("Me: ");
