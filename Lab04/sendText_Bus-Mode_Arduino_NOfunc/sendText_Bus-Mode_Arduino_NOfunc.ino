@@ -28,50 +28,6 @@ void flushRx() {
     uint8_t temp = kenta.read();
   }
 }
-
-void sendText(){
-    String toSend = "";
-    String data = text_data.substring(0, 4);
-    
-    toSend += '`';
-    toSend += reciver;
-    toSend += myID;
-    toSend += count_frame;
-    if(data.length() < 4){
-      for(int i = data.length(); i<4; i++){
-        data += '~';
-      }
-    }
-    toSend += data;
-
-    int sum = 0;
-    for (int i = 1; i < toSend.length(); i++) {
-      for (int k = 0; k < 8; k++) {
-        if (bitRead(toSend[i], k) == 1) {
-          sum++;
-        }
-      }
-    }
-    
-    if (sum % 2 == 0) {
-      toSend += '1';
-    } else {
-      toSend += '0';
-    }
-    toSend += '`';
-    
-    Serial.print("Send frame : ");
-    Serial.println(count_frame);
-    Serial.print("Data       : ");
-    Serial.println(data);
-    Serial.println();
-
-    receiveAck(toSend);
-
-    text_data = text_data.substring(4);
-
-}
-
 void receiveData(String data){
   long current = millis();
     while(!kenta.available()){
@@ -196,10 +152,56 @@ bool checkACK(String data){
 }
 
 void loop() {
-  if(text_data.length() == 0){
-    waitComing();
+  while(kenta.available()){
+    String data_in = "";
+    data_in = kenta.readStringUntil('\n');
+    Serial.println("Receive frame");
+    Serial.print("Header    : ");
+    Serial.println(data_in.substring(1,3));
+    Serial.print("Frame No. : ");
+    Serial.println(data_in[3]);
+    Serial.print("Data      : ");
+    Serial.println(data_in.substring(4,8));
+    Serial.print("Checking  : ");
+    Serial.println(data_in[8]);
   }
-  else{
-    sendText();
-  }
+    String toSend = "";
+    String data = text_data.substring(0, 4);
+    
+    toSend += '`';
+    toSend += reciver;
+    toSend += myID;
+    toSend += count_frame;
+    if(data.length() < 4){
+      for(int i = data.length(); i<4; i++){
+        data += '~';
+      }
+    }
+    toSend += data;
+
+    int sum = 0;
+    for (int i = 1; i < toSend.length(); i++) {
+      for (int k = 0; k < 8; k++) {
+        if (bitRead(toSend[i], k) == 1) {
+          sum++;
+        }
+      }
+    }
+    
+    if (sum % 2 == 0) {
+      toSend += '1';
+    } else {
+      toSend += '0';
+    }
+    toSend += '`';
+    
+    Serial.print("Send frame : ");
+    Serial.println(count_frame);
+    Serial.print("Data       : ");
+    Serial.println(data);
+    Serial.println();
+
+    receiveAck(toSend);
+
+    text_data = text_data.substring(4);
 }
